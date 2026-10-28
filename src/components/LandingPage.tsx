@@ -3,7 +3,7 @@ import {
   Phone, MessageCircle, MapPin, Megaphone, Video, Search, Code, Palette, QrCode,
   Mail, Bot, Crown, Smartphone, Zap, Menu, X, Star, ArrowRight,
 } from "lucide-react";
-import logoDm from "../assets/logo-dm-a.png";
+import logoKbg from "../assets/logo-kbg-a.png";
 
 const WA = "923142763051";
 const wa = (t: string) => `https://wa.me/${WA}?text=${encodeURIComponent(t)}`;
@@ -150,7 +150,7 @@ export default function LandingPage() {
       <header className={`sticky top-0 z-50 border-b border-slate-800 backdrop-blur-xl bg-[#0B0F17]/85 transition-all ${scrolled ? "shadow-[0_8px_30px_-12px_rgba(0,0,0,.8)]" : ""}`}>
         <div className={`max-w-7xl mx-auto px-4 flex items-center justify-between transition-all duration-300 ${scrolled ? "h-16" : "h-20"}`}>
           <a href="#" className="flex items-center gap-3">
-            <img src={logoDm} alt="Karachi Business Growth" width={40} height={40} loading="lazy" className="w-10 h-10 rounded-xl shrink-0" />
+            <img src={logoKbg} alt="Karachi Business Growth" width={40} height={40} loading="lazy" className="w-10 h-10 rounded-xl shrink-0" />
             <div className="leading-tight">
               <div className="font-extrabold text-white">KARACHI <span className="text-emerald-400">BUSINESS GROWTH</span></div>
               <div className="text-[10px] text-slate-400 tracking-widest uppercase">Gulshan-e-Maymar • AI Agency</div>
