@@ -1,7 +1,10 @@
 # Roadmap
 
 ## In progress
-- [ ] Logo icon: "DM" monogram, multi-colour, on a clear background shape; use in header, mobile menu and favicon.
+- [ ] Connect WhatsApp Business number (connector card was cancelled before it ran; needs to be re-opened and completed by the user).
+
+## Done
+- [x] Logo icon: "DM" monogram, multi-colour on a dark rounded tile (src/assets/logo-dm-a.png), used in the header; site icon rebuilt from it and the old default icon removed.
 - [ ] Connect WhatsApp Business number (connector card was cancelled before it ran; needs to be re-opened and completed by the user).
 
 ## Blocked / waiting
