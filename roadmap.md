@@ -1,6 +1,7 @@
 # Roadmap
 
 ## In progress
+- [ ] Sync the project code to GitHub (Git sync is connected in Lovable's own settings; the card needs the user to authorise it).
 - [ ] Connect WhatsApp Business number (connector card keeps getting cancelled by new messages; needs to be opened and completed).
 
 ## Blocked / waiting
