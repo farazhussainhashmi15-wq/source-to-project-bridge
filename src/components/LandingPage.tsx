@@ -15,7 +15,7 @@ function useInView<T extends HTMLElement>(threshold = 0.15) {
     const el = ref.current;
     if (!el) return;
     const io = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) { setSeen(true); io.disconnect(); }
+      if (e?.isIntersecting) { setSeen(true); io.disconnect(); }
     }, { threshold });
     io.observe(el);
     return () => io.disconnect();
@@ -84,7 +84,7 @@ const services = [
   { cat: "web", icon: MapPin, title: "Google Map Optimization", tag: "Karachi Local SEO", text: "Rank #1 on Google Maps in Karachi for your target keywords." },
 ];
 
-const filters = [["all", "All Services"], ["ads", "Ads & Paid Media"], ["branding", "Branding & Print"], ["ai", "AI, Video & WhatsApp"], ["web", "Web, Apps & Maps SEO"]];
+const filters: [string, string][] = [["all", "All Services"], ["ads", "Ads & Paid Media"], ["branding", "Branding & Print"], ["ai", "AI, Video & WhatsApp"], ["web", "Web, Apps & Maps SEO"]];
 
 const strategies = [
   ["01", "New Arrivals Launch", "Teaser reels, countdown ads and WhatsApp broadcasts for launch-day demand."],
