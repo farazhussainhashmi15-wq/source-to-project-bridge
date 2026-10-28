@@ -3,7 +3,7 @@ import {
   Phone, MessageCircle, MapPin, Megaphone, Video, Search, Code, Palette, QrCode,
   Mail, Bot, Crown, Smartphone, Zap, Menu, X, Star, ArrowRight,
 } from "lucide-react";
-import logoKbg from "../assets/logo-kbg-b.png";
+import logoKbg from "../assets/logo-kbg-a.png";
 
 const WA = "923142763051";
 const wa = (t: string) => `https://wa.me/${WA}?text=${encodeURIComponent(t)}`;
