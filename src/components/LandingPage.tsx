@@ -131,7 +131,7 @@ export default function LandingPage() {
 
   const sendQuote = () => {
     if (!picked.length) return alert("Please select at least one service.");
-    window.open(wa(`Hi Karachi Business Growth!\n\nI'd like a custom quote.\n*Business:* ${biz || "Karachi business"}\n*Services:* ${picked.join(", ")}\n*Objective:* ${objective}`), "_blank");
+    window.open(wa(`Hi Karachi Business Growth!\n\nI'd like a custom quote.\n*Business:* ${biz || "Karachi business"}\n*Services:* ${picked.join(", ")}\n*Objective:* ${objective}`), "_blank", "noopener,noreferrer");
   };
 
   const btn = "kbg-shine relative overflow-hidden inline-flex items-center justify-center gap-2 font-bold rounded-2xl transition-transform hover:scale-105";
@@ -143,7 +143,7 @@ export default function LandingPage() {
       {/* Offer bar */}
       <div className="kbg-bar bg-gradient-to-r from-emerald-600 via-teal-600 to-purple-600 text-white text-xs sm:text-sm py-2 px-4 text-center font-medium">
         🔥 24/7 Priority Support & Same-Day Onboarding in Karachi | 20% Off Ads Setup + Free WhatsApp AI Bot Setup!
-        <a href={wa("Hi! I want to claim the offer.")} target="_blank" rel="noreferrer" className="underline font-bold ml-2 hidden sm:inline">Claim Now →</a>
+        <a href={wa("Hi! I want to claim the offer.")} target="_blank" rel="noopener noreferrer" className="underline font-bold ml-2 hidden sm:inline">Claim Now →</a>
       </div>
 
       {/* Header */}
@@ -163,7 +163,7 @@ export default function LandingPage() {
           </nav>
           <div className="hidden sm:flex gap-3">
             <a href="tel:03142763051" className="border border-slate-700 hover:border-emerald-500 px-4 py-2.5 rounded-full text-xs font-bold flex items-center gap-2 transition-colors"><Phone size={14} className="text-emerald-400" />0314 2763051</a>
-            <a href={wa("Hi, I want to scale my business!")} target="_blank" rel="noreferrer" className={`${btn} bg-[#25D366] text-slate-950 px-5 py-2.5 !rounded-full text-xs`}><MessageCircle size={16} />WhatsApp</a>
+            <a href={wa("Hi, I want to scale my business!")} target="_blank" rel="noopener noreferrer" className={`${btn} bg-[#25D366] text-slate-950 px-5 py-2.5 !rounded-full text-xs`}><MessageCircle size={16} />WhatsApp</a>
           </div>
           <button className="lg:hidden" onClick={() => setMenu(!menu)} aria-label="Menu">{menu ? <X /> : <Menu />}</button>
         </div>
@@ -190,7 +190,7 @@ export default function LandingPage() {
           <Reveal delay={240}><p className="text-lg sm:text-xl text-slate-400 max-w-3xl mx-auto">Social Media, Meta/TikTok Ads, Google Maps SEO, Web/Apps, AI Video and WhatsApp AI Catalogs designed for Karachi businesses.</p></Reveal>
           <Reveal delay={360}>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a href={wa("Hi, I want a Free Strategy Consultation.")} target="_blank" rel="noreferrer" className={`${btn} bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 px-8 py-4`}><MessageCircle />WhatsApp Quick Strategy</a>
+              <a href={wa("Hi, I want a Free Strategy Consultation.")} target="_blank" rel="noopener noreferrer" className={`${btn} bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 px-8 py-4`}><MessageCircle />WhatsApp Quick Strategy</a>
               <a href="tel:03142763051" className={`${btn} bg-slate-900 border border-slate-700 text-white px-8 py-4`}><Phone size={18} className="text-emerald-400" />Call 0314 2763051</a>
             </div>
           </Reveal>
@@ -243,7 +243,7 @@ export default function LandingPage() {
                   </div>
                   <h3 className="text-xl font-bold text-white mb-2">{s.title}</h3>
                   <p className="text-slate-400 text-sm mb-5">{s.text}</p>
-                  <a href={wa(`Hi, I'm interested in ${s.title}`)} target="_blank" rel="noreferrer" className="text-xs font-bold text-emerald-400 inline-flex items-center gap-2 group-hover:translate-x-1 transition-transform">Inquire via WhatsApp <ArrowRight size={14} /></a>
+                  <a href={wa(`Hi, I'm interested in ${s.title}`)} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-emerald-400 inline-flex items-center gap-2 group-hover:translate-x-1 transition-transform">Inquire via WhatsApp <ArrowRight size={14} /></a>
                 </Card>
               </div>
             ))}
@@ -319,7 +319,7 @@ export default function LandingPage() {
               <h2 className="text-3xl sm:text-4xl font-extrabold text-white">High-Volume Business? Join Our VIP Club</h2>
               <p className="text-slate-400 text-sm">Priority optimizations, a dedicated account manager, custom AI video shoots and 24/7 WhatsApp strategy support.</p>
             </div>
-            <a href={wa("I'd like to apply for the VIP Client Program.")} target="_blank" rel="noreferrer" className={`${btn} bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 px-8 py-4 text-sm`}><Crown size={16} />Apply for VIP Retainer</a>
+            <a href={wa("I'd like to apply for the VIP Client Program.")} target="_blank" rel="noopener noreferrer" className={`${btn} bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 px-8 py-4 text-sm`}><Crown size={16} />Apply for VIP Retainer</a>
           </Card>
         </Reveal>
       </section>
@@ -333,12 +333,12 @@ export default function LandingPage() {
             <a href="mailto:karachibussinessgrowth@gmail.com" className="flex items-center gap-2 hover:text-emerald-400"><Mail size={14} className="text-emerald-400" />karachibussinessgrowth@gmail.com</a></div>
           <div><h4 className="text-white font-bold mb-3">Services</h4><ul className="space-y-2"><li>Meta, TikTok & Google Ads</li><li>Web, Apps & UI/UX</li><li>Google Map SEO Karachi</li><li>QR Codes & Catalogs</li></ul></div>
           <div className="space-y-3"><h4 className="text-white font-bold">Instant WhatsApp Consultation</h4>
-            <a href={wa("Hi! I'm reaching out from your website.")} target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500 hover:text-slate-950 font-bold py-3 rounded-xl transition-colors"><MessageCircle size={16} />Chat on WhatsApp</a></div>
+            <a href={wa("Hi! I'm reaching out from your website.")} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500 hover:text-slate-950 font-bold py-3 rounded-xl transition-colors"><MessageCircle size={16} />Chat on WhatsApp</a></div>
         </div>
         <p className="text-center pt-6 text-slate-500">© 2026 Karachi Business Growth. All rights reserved.</p>
       </footer>
 
-      <a href={wa("Hi, I'd like a quick quote!")} target="_blank" rel="noreferrer" aria-label="WhatsApp" className="kbg-pulse fixed bottom-6 right-6 z-50 bg-[#25D366] text-slate-950 p-4 rounded-full hover:scale-110 transition-transform"><MessageCircle size={28} /></a>
+      <a href={wa("Hi, I'd like a quick quote!")} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="kbg-pulse fixed bottom-6 right-6 z-50 bg-[#25D366] text-slate-950 p-4 rounded-full hover:scale-110 transition-transform"><MessageCircle size={28} /></a>
     </div>
   );
 }
