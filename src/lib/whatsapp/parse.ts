@@ -18,9 +18,9 @@ export function str(value: unknown): string | null {
   return typeof value === "string" && value.trim() !== "" ? value : null;
 }
 
-/** Read one key out of a parsed webhook object. */
-export function get(record: JsonRecord | null | undefined, key: string): unknown {
-  return record?.[key];
+/** Read one key out of a parsed webhook object, or a database row. */
+export function get(record: unknown, key: string): unknown {
+  return (record as JsonRecord | null | undefined)?.[key];
 }
 
 /** Digits only, so "+92 314 2763051" and "923142763051" compare equal. */
@@ -36,9 +36,7 @@ export function digits(value: string | null | undefined): string {
 export function numberVariants(value: string | null | undefined): string[] {
   const normalized = digits(value);
   if (normalized === "") return [];
-  return normalized.startsWith("0")
-    ? [normalized, normalized.slice(1)]
-    : [normalized];
+  return normalized.startsWith("0") ? [normalized, normalized.slice(1)] : [normalized];
 }
 
 /**
@@ -89,7 +87,7 @@ export function shouldAdvanceStatus(
 
 /** Meta's webhook body always carries exactly one change. */
 export function extractChangeValue(payload: unknown): JsonRecord | null {
-  const entry = asRecord(get(asArray(get(asRecord(payload), "entry"))[0], "changes"));
+  const entry = asRecord(asArray(get(asRecord(payload), "entry"))[0]);
   const change = asRecord(asArray(get(entry, "changes"))[0]);
   return asRecord(get(change, "value"));
 }

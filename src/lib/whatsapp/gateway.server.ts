@@ -1,6 +1,6 @@
 // Server-only WhatsApp gateway access. Never import this from browser code:
 // it reads secret environment variables.
-import { asRecord, get, str } from "./parse";
+import { asArray, asRecord, get, str } from "./parse";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/whatsapp";
 
@@ -29,10 +29,6 @@ function readMessageId(text: string): string {
   const id = str(get(first, "id"));
   if (!id) throw new Error(`WhatsApp send returned no message id: ${text}`);
   return id;
-}
-
-function asArray(value: unknown): unknown[] {
-  return Array.isArray(value) ? value : [];
 }
 
 async function postJson(path: string, body: unknown): Promise<string> {

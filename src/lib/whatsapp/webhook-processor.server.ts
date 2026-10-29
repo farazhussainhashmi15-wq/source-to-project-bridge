@@ -2,14 +2,21 @@
 // status reconciliation and auto-replies. Loaded dynamically from the webhook route
 // so it never enters the browser bundle.
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import type { Json } from "@/integrations/supabase/types";
 
-import { getBusinessNumber, sendWhatsAppText, type TemplateComponent } from "./gateway.server";
+import {
+  getBusinessNumber,
+  sendWhatsAppTemplate,
+  sendWhatsAppText,
+  type TemplateComponent,
+} from "./gateway.server";
 import {
   asArray,
   asRecord,
   collectMessageObjects,
   digits,
   extractChangeValue,
+  get,
   isSameNumber,
   mediaInfo,
   shouldAdvanceStatus,
@@ -32,6 +39,11 @@ const AMBIGUOUS_SEND_MS = 2 * 60 * 1000;
 const STATUS_ATTEMPT_LIMIT = 8;
 const PARKED_MS = 7 * 24 * 60 * 60 * 1000;
 const RECOVERY_LIMIT = 5;
+
+/** jsonb columns are typed as a strict JSON union; these values come from Meta. */
+function asJson(value: unknown): Json {
+  return value as Json;
+}
 
 function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
@@ -72,6 +84,17 @@ type MessageInput = {
   replyStatus: string;
 };
 
+type OutboundPatch = {
+  updated_at: string;
+  status?: string;
+  status_at?: string;
+  sent_at?: string;
+  delivered_at?: string;
+  read_at?: string;
+  error_code?: string | null;
+  error_message?: string | null;
+};
+
 /**
  * Store a verified delivery durably, then process it. A duplicate delivery reuses
  * the stored row and only re-processes it when the first attempt never completed.
@@ -96,7 +119,7 @@ export async function receiveEvent(input: {
       .insert({
         delivery_id: input.deliveryId,
         event: input.event,
-        payload: input.payload as JsonRecord,
+        payload: asJson(input.payload),
         received_at: new Date().toISOString(),
       });
     if (inserted.error && !uniqueViolation(inserted.error)) {
@@ -116,14 +139,19 @@ export async function receiveEvent(input: {
   if (!row) {
     throw new Error("WhatsApp inbox row is missing after insert");
   }
-  if (row.processed_at) return;
+  if (get(row, "processed_at")) return;
+
+  const rowId = Number(get(row, "id"));
+  if (!Number.isFinite(rowId)) {
+    throw new Error("WhatsApp inbox row has no usable id");
+  }
 
   await processRow(
     {
-      id: row.id,
-      event: row.event ?? input.event,
-      payload: row.payload,
-      attempts: row.attempts ?? 0,
+      id: rowId,
+      event: str(get(row, "event")) ?? input.event,
+      payload: get(row, "payload"),
+      attempts: Number(get(row, "attempts") ?? 0),
     },
     true,
   );
@@ -205,7 +233,7 @@ async function storeMessage(message: MessageInput): Promise<void> {
         media_mime: message.mediaMime,
         media_filename: message.mediaFilename,
         caption: message.caption,
-        raw: message.raw,
+        raw: asJson(message.raw),
         received_at: message.receivedAt,
         reply_status: message.replyStatus,
       },
@@ -220,28 +248,28 @@ function messageInput(
   message: JsonRecord,
   options: { direction: string; replyStatus: string },
 ): MessageInput | null {
-  const id = str(message.id);
+  const id = str(get(message, "id"));
   if (!id) return null;
   const media = mediaInfo(message);
   return {
     id,
     direction: options.direction,
-    fromNumber: str(message.from),
-    toNumber: str(message.to),
-    messageType: str(message.type),
+    fromNumber: str(get(message, "from")),
+    toNumber: str(get(message, "to")),
+    messageType: str(get(message, "type")),
     textBody: textContent(message),
     mediaId: media.mediaId,
     mediaMime: media.mediaMime,
     mediaFilename: media.mediaFilename,
     caption: media.caption,
     raw: message,
-    receivedAt: timestampToIso(message.timestamp) ?? new Date().toISOString(),
+    receivedAt: timestampToIso(get(message, "timestamp")) ?? new Date().toISOString(),
     replyStatus: options.replyStatus,
   };
 }
 
 async function handleInboundMessages(value: JsonRecord | null): Promise<void> {
-  for (const item of asArray(value?.messages)) {
+  for (const item of asArray(get(value, "messages"))) {
     const message = asRecord(item);
     if (!message) continue;
     const input = messageInput(message, { direction: "inbound", replyStatus: "pending" });
@@ -251,7 +279,7 @@ async function handleInboundMessages(value: JsonRecord | null): Promise<void> {
 }
 
 async function handleEchoes(value: JsonRecord | null): Promise<void> {
-  for (const item of asArray(value?.message_echoes)) {
+  for (const item of asArray(get(value, "message_echoes"))) {
     const message = asRecord(item);
     if (!message) continue;
     const input = messageInput(message, { direction: "outbound_echo", replyStatus: "skipped" });
@@ -262,7 +290,7 @@ async function handleEchoes(value: JsonRecord | null): Promise<void> {
 async function handleHistory(value: JsonRecord | null): Promise<void> {
   const business = await getBusinessNumber().catch(() => null);
   for (const message of collectMessageObjects(value)) {
-    const from = str(message.from);
+    const from = str(get(message, "from"));
     const direction = business && isSameNumber(from, business) ? "outbound_echo" : "inbound";
     const input = messageInput(message, { direction, replyStatus: "skipped" });
     if (input) await storeMessage(input);
@@ -270,12 +298,12 @@ async function handleHistory(value: JsonRecord | null): Promise<void> {
 }
 
 async function handleContacts(value: JsonRecord | null): Promise<void> {
-  for (const item of asArray(value?.state_sync)) {
+  for (const item of asArray(get(value, "state_sync"))) {
     const entry = asRecord(item);
-    const contact = asRecord(entry?.contact);
-    const phoneNumber = str(contact?.phone_number);
+    const contact = asRecord(get(entry, "contact"));
+    const phoneNumber = str(get(contact, "phone_number"));
     if (!phoneNumber) continue;
-    const action = str(entry?.action);
+    const action = str(get(entry, "action"));
 
     if (action === "remove") {
       const removed = await supabaseAdmin
@@ -293,7 +321,7 @@ async function handleContacts(value: JsonRecord | null): Promise<void> {
       .upsert(
         {
           phone_number: phoneNumber,
-          full_name: str(contact?.full_name),
+          full_name: str(get(contact, "full_name")),
           action,
           updated_at: new Date().toISOString(),
         },
@@ -308,7 +336,11 @@ async function handleContacts(value: JsonRecord | null): Promise<void> {
 async function recordAccountEvent(event: string, value: JsonRecord | null): Promise<void> {
   const stored = await supabaseAdmin
     .from("whatsapp_account_events")
-    .insert({ event, detail: (value ?? {}) as JsonRecord, received_at: new Date().toISOString() });
+    .insert({
+      event,
+      detail: asJson(value ?? {}),
+      received_at: new Date().toISOString(),
+    });
   if (stored.error) {
     throw new Error(`WhatsApp account event store failed: ${stored.error.message}`);
   }
@@ -326,33 +358,36 @@ async function applyStatus(status: StatusInfo): Promise<boolean> {
   const row = lookup.data;
   if (!row) return false;
 
+  const rowId = Number(get(row, "id"));
+  if (!Number.isFinite(rowId)) return false;
+
   const providerTime = status.providerTimestamp ?? new Date().toISOString();
-  const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
+  const patch: OutboundPatch = { updated_at: new Date().toISOString() };
   let changed = false;
 
   // Backfill each state's own provider timestamp, even when the overall state
   // has already moved further along.
-  if (status.status === "sent" && !row.sent_at) {
+  if (status.status === "sent" && !get(row, "sent_at")) {
     patch.sent_at = providerTime;
     changed = true;
   }
-  if (status.status === "delivered" && !row.delivered_at) {
+  if (status.status === "delivered" && !get(row, "delivered_at")) {
     patch.delivered_at = providerTime;
     changed = true;
   }
-  if (status.status === "read" && !row.read_at) {
+  if (status.status === "read" && !get(row, "read_at")) {
     patch.read_at = providerTime;
     changed = true;
   }
 
-  if (shouldAdvanceStatus(row.status, status.status)) {
+  if (shouldAdvanceStatus(str(get(row, "status")), status.status)) {
     patch.status = status.status;
     patch.status_at = providerTime;
     changed = true;
     if (status.status === "failed") {
       const first = asRecord(asArray(status.errors)[0]);
-      patch.error_code = str(first?.code);
-      patch.error_message = str(first?.title) ?? str(first?.message);
+      patch.error_code = str(get(first, "code"));
+      patch.error_message = str(get(first, "title")) ?? str(get(first, "message"));
     }
   }
 
@@ -361,7 +396,7 @@ async function applyStatus(status: StatusInfo): Promise<boolean> {
   const updated = await supabaseAdmin
     .from("whatsapp_outbound_messages")
     .update(patch)
-    .eq("id", row.id);
+    .eq("id", rowId);
   if (updated.error) {
     throw new Error(`WhatsApp status update failed: ${updated.error.message}`);
   }
@@ -377,7 +412,7 @@ async function queuePendingStatus(status: StatusInfo): Promise<void> {
         status: status.status,
         recipient_id: status.recipientId,
         provider_timestamp: status.providerTimestamp,
-        errors: status.errors,
+        errors: asJson(status.errors),
         received_at: new Date().toISOString(),
       },
       { onConflict: "message_id,status", ignoreDuplicates: true },
@@ -388,18 +423,18 @@ async function queuePendingStatus(status: StatusInfo): Promise<void> {
 }
 
 async function handleStatuses(value: JsonRecord | null): Promise<void> {
-  for (const item of asArray(value?.statuses)) {
+  for (const item of asArray(get(value, "statuses"))) {
     const record = asRecord(item);
-    const id = str(record?.id);
-    const status = str(record?.status);
+    const id = str(get(record, "id"));
+    const status = str(get(record, "status"));
     if (!record || !id || !status) continue;
 
     const info: StatusInfo = {
       id,
       status,
-      recipientId: str(record.recipient_id),
-      providerTimestamp: timestampToIso(record.status_timestamp),
-      errors: asArray(record.errors),
+      recipientId: str(get(record, "recipient_id")),
+      providerTimestamp: timestampToIso(get(record, "status_timestamp")),
+      errors: asArray(get(record, "errors")),
     };
 
     const applied = await applyStatus(info);
@@ -421,18 +456,18 @@ async function reconcilePendingStatuses(messageId: string): Promise<void> {
 
   for (const item of queued.data ?? []) {
     const applied = await applyStatus({
-      id: item.message_id,
-      status: item.status,
-      recipientId: item.recipient_id,
-      providerTimestamp: item.provider_timestamp,
-      errors: asArray(item.errors),
+      id: str(get(item, "message_id")) ?? messageId,
+      status: str(get(item, "status")) ?? "",
+      recipientId: str(get(item, "recipient_id")),
+      providerTimestamp: str(get(item, "provider_timestamp")),
+      errors: asArray(get(item, "errors")),
     });
     if (!applied) continue;
     const marked = await supabaseAdmin
       .from("whatsapp_pending_statuses")
       .update({ applied_at: new Date().toISOString() })
-      .eq("message_id", item.message_id)
-      .eq("status", item.status);
+      .eq("message_id", str(get(item, "message_id")) ?? "")
+      .eq("status", str(get(item, "status")) ?? "");
     if (marked.error) {
       throw new Error(`WhatsApp pending status update failed: ${marked.error.message}`);
     }
@@ -469,15 +504,21 @@ export async function sendAndRecord(input: {
     .select("id")
     .single();
   if (inserted.error || !inserted.data) {
-    throw new Error(`WhatsApp outbound record failed: ${inserted.error?.message ?? "no row returned"}`);
+    throw new Error(
+      `WhatsApp outbound record failed: ${inserted.error?.message ?? "no row returned"}`,
+    );
+  }
+  const outboundId = Number(get(inserted.data, "id"));
+  if (!Number.isFinite(outboundId)) {
+    throw new Error("WhatsApp outbound record has no usable id");
   }
 
   try {
     const result = input.text
       ? await sendWhatsAppText(to, input.text)
-      : await (await import("./gateway.server")).sendWhatsAppTemplate(
+      : await sendWhatsAppTemplate(
           to,
-          input.templateName!,
+          input.templateName ?? "",
           input.templateLanguage ?? "en_US",
           input.templateComponents ?? [],
         );
@@ -490,7 +531,7 @@ export async function sendAndRecord(input: {
         status_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
-      .eq("id", inserted.data.id);
+      .eq("id", outboundId);
     if (saved.error) {
       // Meta accepted the message but the id is not stored: name it so a human can reconcile.
       throw new Error(
@@ -508,7 +549,7 @@ export async function sendAndRecord(input: {
         error_message: errorMessage(error),
         updated_at: new Date().toISOString(),
       })
-      .eq("id", inserted.data.id);
+      .eq("id", outboundId);
     if (failed.error) {
       console.error("Could not record WhatsApp send failure:", failed.error.message);
     }
@@ -537,12 +578,16 @@ async function sendPendingReplies(limit: number): Promise<void> {
   }
 
   for (const row of due.data ?? []) {
-    if (business && isSameNumber(row.from_number, business)) {
+    const messageId = str(get(row, "id"));
+    if (!messageId) continue;
+    const currentStatus = str(get(row, "reply_status")) ?? "pending";
+
+    if (business && isSameNumber(str(get(row, "from_number")), business)) {
       const skipped = await supabaseAdmin
         .from("whatsapp_messages")
         .update({ reply_status: "skipped" })
-        .eq("id", row.id)
-        .eq("reply_status", row.reply_status);
+        .eq("id", messageId)
+        .eq("reply_status", currentStatus);
       if (skipped.error) {
         throw new Error(`WhatsApp reply update failed: ${skipped.error.message}`);
       }
@@ -555,8 +600,8 @@ async function sendPendingReplies(limit: number): Promise<void> {
         reply_status: "sending",
         reply_attempted_at: new Date().toISOString(),
       })
-      .eq("id", row.id)
-      .eq("reply_status", row.reply_status)
+      .eq("id", messageId)
+      .eq("reply_status", currentStatus)
       .select("id");
     if (claimed.error) {
       throw new Error(`WhatsApp reply claim failed: ${claimed.error.message}`);
@@ -564,7 +609,7 @@ async function sendPendingReplies(limit: number): Promise<void> {
     if (!claimed.data || claimed.data.length === 0) continue;
 
     try {
-      const result = await sendAndRecord({ to: row.from_number, text: AUTO_REPLY_TEXT });
+      const result = await sendAndRecord({ to: str(get(row, "from_number")) ?? "", text: AUTO_REPLY_TEXT });
       const done = await supabaseAdmin
         .from("whatsapp_messages")
         .update({
@@ -573,7 +618,7 @@ async function sendPendingReplies(limit: number): Promise<void> {
           replied_at: new Date().toISOString(),
           reply_error: null,
         })
-        .eq("id", row.id);
+        .eq("id", messageId);
       if (done.error) {
         throw new Error(`WhatsApp reply update failed: ${done.error.message}`);
       }
@@ -583,9 +628,9 @@ async function sendPendingReplies(limit: number): Promise<void> {
         .update({
           reply_status: "failed",
           reply_error: errorMessage(error),
-          reply_attempts: (row.reply_attempts ?? 0) + 1,
+          reply_attempts: Number(get(row, "reply_attempts") ?? 0) + 1,
         })
-        .eq("id", row.id);
+        .eq("id", messageId);
       if (failed.error) {
         console.error("Could not record WhatsApp reply failure:", failed.error.message);
       }
@@ -625,27 +670,31 @@ async function recoverUnfinishedWork(): Promise<void> {
   }
 
   for (const item of due.data ?? []) {
+    const messageId = str(get(item, "message_id"));
+    const status = str(get(item, "status"));
+    if (!messageId || !status) continue;
+
     const applied = await applyStatus({
-      id: item.message_id,
-      status: item.status,
-      recipientId: item.recipient_id,
-      providerTimestamp: item.provider_timestamp,
-      errors: asArray(item.errors),
+      id: messageId,
+      status,
+      recipientId: str(get(item, "recipient_id")),
+      providerTimestamp: str(get(item, "provider_timestamp")),
+      errors: asArray(get(item, "errors")),
     });
 
     if (applied) {
       const marked = await supabaseAdmin
         .from("whatsapp_pending_statuses")
         .update({ applied_at: new Date().toISOString() })
-        .eq("message_id", item.message_id)
-        .eq("status", item.status);
+        .eq("message_id", messageId)
+        .eq("status", status);
       if (marked.error) {
         console.error("Could not mark WhatsApp status applied:", marked.error.message);
       }
       continue;
     }
 
-    const attempts = (item.attempts ?? 0) + 1;
+    const attempts = Number(get(item, "attempts") ?? 0) + 1;
     const waitMs = attempts >= STATUS_ATTEMPT_LIMIT ? PARKED_MS : 30 * 1000 * attempts;
     const deferred = await supabaseAdmin
       .from("whatsapp_pending_statuses")
@@ -653,8 +702,8 @@ async function recoverUnfinishedWork(): Promise<void> {
         attempts,
         next_retry_at: new Date(Date.now() + waitMs).toISOString(),
       })
-      .eq("message_id", item.message_id)
-      .eq("status", item.status);
+      .eq("message_id", messageId)
+      .eq("status", status);
     if (deferred.error) {
       console.error("Could not defer WhatsApp status:", deferred.error.message);
     }
