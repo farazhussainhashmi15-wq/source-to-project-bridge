@@ -1,9 +1,8 @@
 # Roadmap
 
-## In progress
-- [ ] Past chats + contacts import — requested from WhatsApp; waiting for the deliveries to land. This also proves this project is the "Incoming messages" destination.
-
 ## Waiting on the user
+- [ ] Past chats + contacts import — WhatsApp accepted the request, but nothing arrived in about 6 minutes. The number's "Incoming messages" destination must be set to this project (Connectors → WhatsApp → the connection → Incoming messages); then the import can be requested again inside the 24-hour window.
+
 - [ ] Sync the project code to GitHub — must be started in Lovable's own settings (Project settings → Git); the agent cannot connect a repository.
 - [ ] Confirm the auto-reply wording (currently placeholder copy) and decide what approved message templates to create for anything sent outside the 24-hour window.
 
