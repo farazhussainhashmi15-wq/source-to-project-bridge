@@ -5,8 +5,8 @@ import { asArray, asRecord, get, str } from "./parse";
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/whatsapp";
 
 function gatewayHeaders(): Record<string, string> {
-  const lovableApiKey = process.env.LOVABLE_API_KEY;
-  const connectionKey = process.env.WHATSAPP_API_KEY;
+  const lovableApiKey = process.env["LOVABLE_API_KEY"];
+  const connectionKey = process.env["WHATSAPP_API_KEY"];
   if (!lovableApiKey) throw new Error("LOVABLE_API_KEY is not configured");
   if (!connectionKey) throw new Error("WHATSAPP_API_KEY is not configured");
   return {

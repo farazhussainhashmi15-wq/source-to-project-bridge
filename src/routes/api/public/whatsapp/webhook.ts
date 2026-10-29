@@ -8,7 +8,7 @@ export const Route = createFileRoute("/api/public/whatsapp/webhook")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const secret = process.env.WHATSAPP_API_KEY;
+        const secret = process.env["WHATSAPP_API_KEY"];
         if (!secret) {
           return Response.json({ error: "WhatsApp is not configured" }, { status: 500 });
         }
