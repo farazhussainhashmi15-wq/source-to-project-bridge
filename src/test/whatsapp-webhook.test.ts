@@ -3,10 +3,12 @@ import { describe, expect, it } from "vitest";
 import {
   collectMessageObjects,
   extractChangeValue,
+  get,
   isSameNumber,
   mediaInfo,
   shouldAdvanceStatus,
   statusRank,
+  str,
   textContent,
   timestampToIso,
 } from "@/lib/whatsapp/parse";
@@ -57,7 +59,7 @@ describe("WhatsApp webhook parsing", () => {
     };
     const messages = collectMessageObjects(value);
     expect(messages).toHaveLength(1);
-    expect(messages[0].id).toBe("wamid.a");
+    expect(str(get(messages[0], "id"))).toBe("wamid.a");
   });
 
   it("converts Meta's unix seconds into an ISO timestamp", () => {
