@@ -18,9 +18,27 @@ export function str(value: unknown): string | null {
   return typeof value === "string" && value.trim() !== "" ? value : null;
 }
 
+/** Read one key out of a parsed webhook object. */
+export function get(record: JsonRecord | null | undefined, key: string): unknown {
+  return record?.[key];
+}
+
 /** Digits only, so "+92 314 2763051" and "923142763051" compare equal. */
 export function digits(value: string | null | undefined): string {
   return (value ?? "").replace(/\D/g, "");
+}
+
+/**
+ * A Pakistani local number (0314 2763051) drops the country code and keeps a
+ * leading zero, while the international form (923142763051) does the opposite.
+ * Both spellings must recognise the same number.
+ */
+export function numberVariants(value: string | null | undefined): string[] {
+  const normalized = digits(value);
+  if (normalized === "") return [];
+  return normalized.startsWith("0")
+    ? [normalized, normalized.slice(1)]
+    : [normalized];
 }
 
 /**
@@ -31,10 +49,13 @@ export function isSameNumber(
   a: string | null | undefined,
   b: string | null | undefined,
 ): boolean {
-  const x = digits(a);
-  const y = digits(b);
-  if (x === "" || y === "") return false;
-  return x === y || x.endsWith(y) || y.endsWith(x);
+  for (const left of numberVariants(a)) {
+    for (const right of numberVariants(b)) {
+      if (left === "" || right === "") continue;
+      if (left === right || left.endsWith(right) || right.endsWith(left)) return true;
+    }
+  }
+  return false;
 }
 
 /** Delivery states in the order Meta reports them. */
@@ -49,9 +70,16 @@ export function statusRank(status: string): number {
  * state, and a "failed" notice must not arrive after the customer already read the
  * message.
  */
-export function shouldAdvanceStatus(current: string | null | undefined, next: string): boolean {
+export function shouldAdvanceStatus(
+  current: string | null | undefined,
+  next: string,
+): boolean {
   if (next === "failed") {
-    return current === null || current === undefined || ["pending", "accepted", "sent"].includes(current);
+    return (
+      current === null ||
+      current === undefined ||
+      ["pending", "accepted", "sent"].includes(current)
+    );
   }
   const nextRank = statusRank(next);
   if (nextRank < 0) return false;
@@ -61,15 +89,15 @@ export function shouldAdvanceStatus(current: string | null | undefined, next: st
 
 /** Meta's webhook body always carries exactly one change. */
 export function extractChangeValue(payload: unknown): JsonRecord | null {
-  const entry = asRecord(asArray(asRecord(payload)?.entry)[0]);
-  const change = asRecord(asArray(entry?.changes)[0]);
-  return asRecord(change?.value);
+  const entry = asRecord(get(asArray(get(asRecord(payload), "entry"))[0], "changes"));
+  const change = asRecord(asArray(get(entry, "changes"))[0]);
+  return asRecord(get(change, "value"));
 }
 
 export function extractField(payload: unknown): string | null {
-  const entry = asRecord(asArray(asRecord(payload)?.entry)[0]);
-  const change = asRecord(asArray(entry?.changes)[0]);
-  return str(asRecord(change)?.field);
+  const entry = asRecord(asArray(get(asRecord(payload), "entry"))[0]);
+  const change = asRecord(asArray(get(entry, "changes"))[0]);
+  return str(get(change, "field"));
 }
 
 /**
@@ -89,9 +117,11 @@ export function collectMessageObjects(value: unknown, maxDepth = 10): JsonRecord
     }
     const record = asRecord(node);
     if (!record) return;
+    const id = get(record, "id");
+    const from = get(record, "from");
+    const to = get(record, "to");
     const looksLikeMessage =
-      typeof record.id === "string" &&
-      (typeof record.from === "string" || typeof record.to === "string");
+      typeof id === "string" && (typeof from === "string" || typeof to === "string");
     if (looksLikeMessage) {
       if (!seen.has(record)) {
         seen.add(record);
@@ -128,32 +158,33 @@ export type MediaInfo = {
 
 /** Image/document/audio/video/sticker bodies all carry an id plus optional metadata. */
 export function mediaInfo(message: JsonRecord): MediaInfo {
-  const type = str(message.type);
-  const container = type ? asRecord(message[type]) : null;
+  const type = str(get(message, "type"));
+  const container = type ? asRecord(get(message, type)) : null;
+  const size = get(container, "file_size");
   return {
-    mediaId: str(container?.id),
-    mediaMime: str(container?.mime_type),
-    mediaFilename: str(container?.filename),
-    caption: str(container?.caption),
-    mediaSize: typeof container?.file_size === "number" ? container.file_size : null,
+    mediaId: str(get(container, "id")),
+    mediaMime: str(get(container, "mime_type")),
+    mediaFilename: str(get(container, "filename")),
+    caption: str(get(container, "caption")),
+    mediaSize: typeof size === "number" ? size : null,
   };
 }
 
 /** The human-readable part of any inbound message shape. */
 export function textContent(message: JsonRecord): string | null {
-  const text = str(asRecord(message.text)?.body);
+  const text = str(get(asRecord(get(message, "text")), "body"));
   if (text) return text;
 
-  const button = str(asRecord(message.button)?.text);
+  const button = str(get(asRecord(get(message, "button")), "text"));
   if (button) return button;
 
-  const interactive = asRecord(message.interactive);
+  const interactive = asRecord(get(message, "interactive"));
   const reply =
-    str(asRecord(interactive?.button_reply)?.title) ??
-    str(asRecord(interactive?.list_reply)?.title);
+    str(get(asRecord(get(interactive, "button_reply")), "title")) ??
+    str(get(asRecord(get(interactive, "list_reply")), "title"));
   if (reply) return reply;
 
-  const reaction = str(asRecord(message.reaction)?.emoji);
+  const reaction = str(get(asRecord(get(message, "reaction")), "emoji"));
   if (reaction) return reaction;
 
   return null;

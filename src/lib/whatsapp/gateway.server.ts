@@ -1,6 +1,6 @@
 // Server-only WhatsApp gateway access. Never import this from browser code:
 // it reads secret environment variables.
-import { asRecord, str } from "./parse";
+import { asRecord, get, str } from "./parse";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/whatsapp";
 
@@ -25,10 +25,14 @@ function readMessageId(text: string): string {
   } catch {
     throw new Error(`WhatsApp send returned an unreadable response: ${text}`);
   }
-  const messages = Array.isArray(asRecord(parsed)?.messages) ? (asRecord(parsed)!.messages as unknown[]) : [];
-  const id = str(asRecord(messages[0])?.id);
+  const first = asRecord(asArray(get(asRecord(parsed), "messages"))[0]);
+  const id = str(get(first, "id"));
   if (!id) throw new Error(`WhatsApp send returned no message id: ${text}`);
   return id;
+}
+
+function asArray(value: unknown): unknown[] {
+  return Array.isArray(value) ? value : [];
 }
 
 async function postJson(path: string, body: unknown): Promise<string> {
@@ -95,7 +99,7 @@ export async function getBusinessNumber(): Promise<string> {
   } catch {
     throw new Error(`WhatsApp number lookup returned an unreadable response: ${text}`);
   }
-  const number = str(asRecord(parsed)?.display_phone_number);
+  const number = str(get(asRecord(parsed), "display_phone_number"));
   if (!number) throw new Error(`WhatsApp number lookup returned no number: ${text}`);
   cachedBusinessNumber = number;
   return number;
