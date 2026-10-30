@@ -8,6 +8,13 @@
       "when": 1793291126679,
       "tag": "0000_create_whatsapp_messaging_tables",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793395326781,
+      "tag": "0001_inbox_admin_roles",
+      "breakpoints": true
     }
   ]
 }
