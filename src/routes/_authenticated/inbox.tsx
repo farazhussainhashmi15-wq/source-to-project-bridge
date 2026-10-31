@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { checkInboxAccess, getConversation, listConversations, sendReply } from "@/lib/whatsapp/inbox.functions";
 
 export const Route = createFileRoute("/_authenticated/inbox")({
+  staticData: { sitemap: false },
   head: () => ({
     meta: [
       { title: "WhatsApp Inbox — Karachi Business Growth" },

@@ -7,6 +7,7 @@
 - [ ] Confirm the auto-reply wording (currently placeholder copy) and decide what approved message templates to create for anything sent outside the 24-hour window.
 
 ## Done
+- [x] Add a router-derived XML sitemap for public pages and reference it in robots.txt, excluding sign-in, private inbox and API endpoints.
 - [x] WhatsApp connected to 0314 2763051; Lovable Cloud enabled so messages have durable storage.
 - [x] Receiver live at /api/public/whatsapp/webhook — verifies every delivery, stores it durably, ignores replays, saves messages, parks delivery callbacks that arrive before their send record, auto-replies to customer messages and never to the business's own number. Verified end to end with signed test deliveries; test rows removed.
 - [x] KBG logo in the header and as the site icon.
