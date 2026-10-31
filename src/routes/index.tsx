@@ -4,6 +4,7 @@ import LandingPage from "@/components/LandingPage";
 const SITE_URL = "https://karachi-bussiness-growth.lovable.app";
 
 export const Route = createFileRoute("/")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { title: "Karachi Business Growth — Ads, SEO & WhatsApp AI" },

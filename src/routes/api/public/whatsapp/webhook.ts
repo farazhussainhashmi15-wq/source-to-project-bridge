@@ -5,6 +5,7 @@ import { verifyWebhookRequest, WebhookError } from "@lovable.dev/webhooks-js";
 const MAX_BODY_BYTES = 4 * 1024 * 1024;
 
 export const Route = createFileRoute("/api/public/whatsapp/webhook")({
+  staticData: { sitemap: false },
   server: {
     handlers: {
       POST: async ({ request }) => {
