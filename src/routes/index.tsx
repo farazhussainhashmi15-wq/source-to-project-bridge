@@ -29,6 +29,34 @@ export const Route = createFileRoute("/")({
       },
     ],
     links: [{ rel: "canonical", href: `${SITE_URL}/` }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ProfessionalService",
+          name: "Karachi Business Growth",
+          description:
+            "Meta, TikTok & Google ads, Google Maps SEO, websites and WhatsApp AI funnels for Karachi businesses.",
+          url: `${SITE_URL}/`,
+          telephone: "+923142763051",
+          email: "karachibussinessgrowth@gmail.com",
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "Gulshan-e-Maymar",
+            addressRegion: "Karachi",
+            addressCountry: "PK",
+          },
+          areaServed: { "@type": "City", name: "Karachi" },
+          contactPoint: {
+            "@type": "ContactPoint",
+            telephone: "+923142763051",
+            contactType: "customer service",
+            availableLanguage: ["English", "Urdu"],
+          },
+        }),
+      },
+    ],
   }),
   component: LandingPage,
 });
