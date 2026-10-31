@@ -79,13 +79,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Karachi Business Growth" },
-      { name: "description", content: "Digital marketing for Karachi businesses" },
-      { name: "author", content: "Lovable" },
+      {
+        name: "description",
+        content:
+          "Meta, TikTok & Google ads, Google Maps SEO, websites and WhatsApp AI funnels for businesses in Karachi.",
+      },
       { property: "og:title", content: "Karachi Business Growth" },
-      { property: "og:description", content: "Digital marketing for Karachi businesses" },
+      {
+        property: "og:description",
+        content:
+          "Digital marketing that scales Karachi brands: ads, local SEO, websites and WhatsApp automation.",
+      },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "Karachi Business Growth" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {
