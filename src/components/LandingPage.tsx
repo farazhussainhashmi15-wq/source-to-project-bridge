@@ -1,9 +1,12 @@
 import { useEffect, useRef, useState, ReactNode } from "react";
+import { Link } from "@tanstack/react-router";
 import {
   Phone, MessageCircle, MapPin, Megaphone, Video, Search, Code, Palette, QrCode,
   Mail, Bot, Crown, Smartphone, Zap, Menu, X, Star, ArrowRight,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import logoKbg from "../assets/logo-kbg-a.png";
+import type { ServiceSlug } from "@/lib/service-pages";
 
 const WA = "923142763051";
 const wa = (t: string) => `https://wa.me/${WA}?text=${encodeURIComponent(t)}`;
@@ -72,17 +75,17 @@ const stats = [
   { to: 99, suffix: "%", label: "Transparent Pricing", c: "text-amber-400" },
 ];
 
-const services = [
+const services: { cat: string; icon: LucideIcon; title: string; tag: string; text: string; page?: ServiceSlug }[] = [
   { cat: "ads", icon: Megaphone, title: "Meta Ads (Facebook & Instagram)", tag: "High ROI", text: "Laser-targeted campaigns, lookalike audiences and direct-to-WhatsApp objectives for Karachi." },
   { cat: "ads", icon: Smartphone, title: "TikTok Ads Management", tag: "Viral Growth", text: "Vertical video campaigns built for Pakistan's TikTok audience." },
-  { cat: "ads", icon: Search, title: "Google & YouTube Ads", tag: "Intent Sales", text: "Search, Performance Max and YouTube campaigns for buyers already searching." },
+  { cat: "ads", icon: Search, title: "Google & YouTube Ads", tag: "Intent Sales", text: "Search, Performance Max and YouTube campaigns for buyers already searching.", page: "/google-ads" },
   { cat: "branding", icon: Palette, title: "Graphics, Cards & Company Profiles", tag: "Brand Identity", text: "Logos, brochures, visiting cards, NFC cards and corporate profiles." },
   { cat: "branding", icon: QrCode, title: "Dynamic QR Codes", tag: "Smart Tech", text: "Branded, trackable QR codes linking print to WhatsApp, menu or website." },
-  { cat: "ai", icon: Bot, title: "WhatsApp Catalog & AI Chat", tag: "AI Powered", text: "Product catalogs, AI auto-replies and WhatsApp Business API setup." },
+  { cat: "ai", icon: Bot, title: "WhatsApp Catalog & AI Chat", tag: "AI Powered", text: "Product catalogs, AI auto-replies and WhatsApp Business API setup.", page: "/whatsapp-marketing" },
   { cat: "ai", icon: Video, title: "AI Video Generation", tag: "Next-Gen Video", text: "Urdu/English AI voiceovers and product video ads without expensive shoots." },
   { cat: "ai", icon: Mail, title: "Email Marketing & Signatures", tag: "Retention", text: "Automated flows, abandoned-cart recovery and clickable HTML signatures." },
   { cat: "web", icon: Code, title: "Websites, Apps & E-Commerce", tag: "Custom Web", text: "Fast responsive sites, landing pages, Shopify and WooCommerce stores." },
-  { cat: "web", icon: MapPin, title: "Google Map Optimization", tag: "Karachi Local SEO", text: "Rank #1 on Google Maps in Karachi for your target keywords." },
+  { cat: "web", icon: MapPin, title: "Google Map Optimization", tag: "Karachi Local SEO", text: "Rank #1 on Google Maps in Karachi for your target keywords.", page: "/seo-services" },
 ];
 
 const filters: [string, string][] = [["all", "All Services"], ["ads", "Ads & Paid Media"], ["branding", "Branding & Print"], ["ai", "AI, Video & WhatsApp"], ["web", "Web, Apps & Maps SEO"]];
