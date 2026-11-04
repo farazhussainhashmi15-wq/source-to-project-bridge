@@ -7,7 +7,7 @@ import { sitemapStaticPaths, sitemapXML } from "@/lib/sitemap";
 describe("Karachi Business Growth sitemap", () => {
   it("includes the homepage and excludes private, sign-in and API URLs", () => {
     const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
-    expect(sitemapStaticPaths(router)).toEqual(["/"]);
+    expect(sitemapStaticPaths(router)).toEqual(["/", "/google-ads", "/seo-services", "/whatsapp-marketing"]);
   });
 
   it("uses the public origin and omits unverified lastmod dates", () => {

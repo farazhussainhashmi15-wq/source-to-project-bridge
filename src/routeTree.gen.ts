@@ -12,7 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as GoogleAdsRouteImport } from './routes/google-ads'
+import { Route as SeoServicesRouteImport } from './routes/seo-services'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as WhatsappMarketingRouteImport } from './routes/whatsapp-marketing'
 import { Route as AuthenticatedInboxRouteImport } from './routes/_authenticated/inbox'
 import { Route as ApiPublicWhatsappWebhookRouteImport } from './routes/api/public/whatsapp/webhook'
 
@@ -30,9 +33,24 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GoogleAdsRoute = GoogleAdsRouteImport.update({
+  id: '/google-ads',
+  path: '/google-ads',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SeoServicesRoute = SeoServicesRouteImport.update({
+  id: '/seo-services',
+  path: '/seo-services',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WhatsappMarketingRoute = WhatsappMarketingRouteImport.update({
+  id: '/whatsapp-marketing',
+  path: '/whatsapp-marketing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedInboxRoute = AuthenticatedInboxRouteImport.update({
@@ -50,14 +68,20 @@ const ApiPublicWhatsappWebhookRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/google-ads': typeof GoogleAdsRoute
+  '/seo-services': typeof SeoServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/whatsapp-marketing': typeof WhatsappMarketingRoute
   '/inbox': typeof AuthenticatedInboxRoute
   '/api/public/whatsapp/webhook': typeof ApiPublicWhatsappWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/google-ads': typeof GoogleAdsRoute
+  '/seo-services': typeof SeoServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/whatsapp-marketing': typeof WhatsappMarketingRoute
   '/inbox': typeof AuthenticatedInboxRoute
   '/api/public/whatsapp/webhook': typeof ApiPublicWhatsappWebhookRoute
 }
@@ -66,22 +90,43 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/google-ads': typeof GoogleAdsRoute
+  '/seo-services': typeof SeoServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/whatsapp-marketing': typeof WhatsappMarketingRoute
   '/_authenticated/inbox': typeof AuthenticatedInboxRoute
   '/api/public/whatsapp/webhook': typeof ApiPublicWhatsappWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/auth' | '/sitemap.xml' | '/inbox' | '/api/public/whatsapp/webhook'
+    | '/'
+    | '/auth'
+    | '/google-ads'
+    | '/seo-services'
+    | '/sitemap.xml'
+    | '/whatsapp-marketing'
+    | '/inbox'
+    | '/api/public/whatsapp/webhook'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/sitemap.xml' | '/inbox' | '/api/public/whatsapp/webhook'
+  to:
+    | '/'
+    | '/auth'
+    | '/google-ads'
+    | '/seo-services'
+    | '/sitemap.xml'
+    | '/whatsapp-marketing'
+    | '/inbox'
+    | '/api/public/whatsapp/webhook'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/google-ads'
+    | '/seo-services'
     | '/sitemap.xml'
+    | '/whatsapp-marketing'
     | '/_authenticated/inbox'
     | '/api/public/whatsapp/webhook'
   fileRoutesById: FileRoutesById
@@ -90,7 +135,10 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  GoogleAdsRoute: typeof GoogleAdsRoute
+  SeoServicesRoute: typeof SeoServicesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  WhatsappMarketingRoute: typeof WhatsappMarketingRoute
   ApiPublicWhatsappWebhookRoute: typeof ApiPublicWhatsappWebhookRoute
 }
 
@@ -117,11 +165,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/google-ads': {
+      id: '/google-ads'
+      path: '/google-ads'
+      fullPath: '/google-ads'
+      preLoaderRoute: typeof GoogleAdsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/seo-services': {
+      id: '/seo-services'
+      path: '/seo-services'
+      fullPath: '/seo-services'
+      preLoaderRoute: typeof SeoServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/whatsapp-marketing': {
+      id: '/whatsapp-marketing'
+      path: '/whatsapp-marketing'
+      fullPath: '/whatsapp-marketing'
+      preLoaderRoute: typeof WhatsappMarketingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/inbox': {
@@ -156,7 +225,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  GoogleAdsRoute: GoogleAdsRoute,
+  SeoServicesRoute: SeoServicesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  WhatsappMarketingRoute: WhatsappMarketingRoute,
   ApiPublicWhatsappWebhookRoute: ApiPublicWhatsappWebhookRoute,
 }
 export const routeTree = rootRouteImport

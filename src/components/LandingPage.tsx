@@ -1,9 +1,12 @@
 import { useEffect, useRef, useState, ReactNode } from "react";
+import { Link } from "@tanstack/react-router";
 import {
   Phone, MessageCircle, MapPin, Megaphone, Video, Search, Code, Palette, QrCode,
   Mail, Bot, Crown, Smartphone, Zap, Menu, X, Star, ArrowRight,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import logoKbg from "../assets/logo-kbg-a.png";
+import type { ServiceSlug } from "@/lib/service-pages";
 
 const WA = "923142763051";
 const wa = (t: string) => `https://wa.me/${WA}?text=${encodeURIComponent(t)}`;
@@ -72,17 +75,17 @@ const stats = [
   { to: 99, suffix: "%", label: "Transparent Pricing", c: "text-amber-400" },
 ];
 
-const services = [
+const services: { cat: string; icon: LucideIcon; title: string; tag: string; text: string; page?: ServiceSlug }[] = [
   { cat: "ads", icon: Megaphone, title: "Meta Ads (Facebook & Instagram)", tag: "High ROI", text: "Laser-targeted campaigns, lookalike audiences and direct-to-WhatsApp objectives for Karachi." },
   { cat: "ads", icon: Smartphone, title: "TikTok Ads Management", tag: "Viral Growth", text: "Vertical video campaigns built for Pakistan's TikTok audience." },
-  { cat: "ads", icon: Search, title: "Google & YouTube Ads", tag: "Intent Sales", text: "Search, Performance Max and YouTube campaigns for buyers already searching." },
+  { cat: "ads", icon: Search, title: "Google & YouTube Ads", tag: "Intent Sales", text: "Search, Performance Max and YouTube campaigns for buyers already searching.", page: "/google-ads" },
   { cat: "branding", icon: Palette, title: "Graphics, Cards & Company Profiles", tag: "Brand Identity", text: "Logos, brochures, visiting cards, NFC cards and corporate profiles." },
   { cat: "branding", icon: QrCode, title: "Dynamic QR Codes", tag: "Smart Tech", text: "Branded, trackable QR codes linking print to WhatsApp, menu or website." },
-  { cat: "ai", icon: Bot, title: "WhatsApp Catalog & AI Chat", tag: "AI Powered", text: "Product catalogs, AI auto-replies and WhatsApp Business API setup." },
+  { cat: "ai", icon: Bot, title: "WhatsApp Catalog & AI Chat", tag: "AI Powered", text: "Product catalogs, AI auto-replies and WhatsApp Business API setup.", page: "/whatsapp-marketing" },
   { cat: "ai", icon: Video, title: "AI Video Generation", tag: "Next-Gen Video", text: "Urdu/English AI voiceovers and product video ads without expensive shoots." },
   { cat: "ai", icon: Mail, title: "Email Marketing & Signatures", tag: "Retention", text: "Automated flows, abandoned-cart recovery and clickable HTML signatures." },
   { cat: "web", icon: Code, title: "Websites, Apps & E-Commerce", tag: "Custom Web", text: "Fast responsive sites, landing pages, Shopify and WooCommerce stores." },
-  { cat: "web", icon: MapPin, title: "Google Map Optimization", tag: "Karachi Local SEO", text: "Rank #1 on Google Maps in Karachi for your target keywords." },
+  { cat: "web", icon: MapPin, title: "Google Map Optimization", tag: "Karachi Local SEO", text: "Rank #1 on Google Maps in Karachi for your target keywords.", page: "/seo-services" },
 ];
 
 const filters: [string, string][] = [["all", "All Services"], ["ads", "Ads & Paid Media"], ["branding", "Branding & Print"], ["ai", "AI, Video & WhatsApp"], ["web", "Web, Apps & Maps SEO"]];
@@ -157,9 +160,11 @@ export default function LandingPage() {
             </div>
           </a>
           <nav className="hidden lg:flex gap-6 text-sm font-medium text-slate-300">
-            {[["services", "Services"], ["strategies", "More Customers"], ["funnel", "WhatsApp Funnel"], ["calculator", "Estimate Plan"], ["vip", "VIP Club"]].map(([id, l]) => (
-              <a key={id} href={`#${id}`} className="hover:text-emerald-400 transition-colors">{l}</a>
-            ))}
+            <a href="#services" className="hover:text-emerald-400 transition-colors">Services</a>
+            <Link to="/seo-services" className="hover:text-emerald-400 transition-colors">SEO</Link>
+            <Link to="/google-ads" className="hover:text-emerald-400 transition-colors">Google Ads</Link>
+            <Link to="/whatsapp-marketing" className="hover:text-emerald-400 transition-colors">WhatsApp</Link>
+            <a href="#calculator" className="hover:text-emerald-400 transition-colors">Estimate Plan</a>
           </nav>
           <div className="hidden sm:flex gap-3">
             <a href="tel:03142763051" className="border border-slate-700 hover:border-emerald-500 px-4 py-2.5 rounded-full text-xs font-bold flex items-center gap-2 transition-colors"><Phone size={14} className="text-emerald-400" />0314 2763051</a>
@@ -169,9 +174,11 @@ export default function LandingPage() {
         </div>
         {menu && (
           <div className="lg:hidden px-6 py-4 space-y-3 bg-[#151C2C] border-t border-slate-800 animate-in slide-in-from-top-2">
-            {["services", "strategies", "funnel", "calculator", "vip"].map((id) => (
-              <a key={id} href={`#${id}`} onClick={() => setMenu(false)} className="block capitalize py-2 border-b border-slate-800">{id}</a>
-            ))}
+            <a href="#services" onClick={() => setMenu(false)} className="block py-2 border-b border-slate-800">Services</a>
+            <Link to="/seo-services" onClick={() => setMenu(false)} className="block py-2 border-b border-slate-800">SEO</Link>
+            <Link to="/google-ads" onClick={() => setMenu(false)} className="block py-2 border-b border-slate-800">Google Ads</Link>
+            <Link to="/whatsapp-marketing" onClick={() => setMenu(false)} className="block py-2 border-b border-slate-800">WhatsApp Marketing</Link>
+            <a href="#calculator" onClick={() => setMenu(false)} className="block py-2 border-b border-slate-800">Estimate Plan</a>
           </div>
         )}
       </header>
@@ -243,7 +250,12 @@ export default function LandingPage() {
                   </div>
                   <h3 className="text-xl font-bold text-white mb-2">{s.title}</h3>
                   <p className="text-slate-400 text-sm mb-5">{s.text}</p>
-                  <a href={wa(`Hi, I'm interested in ${s.title}`)} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-emerald-400 inline-flex items-center gap-2 group-hover:translate-x-1 transition-transform">Inquire via WhatsApp <ArrowRight size={14} /></a>
+                  <div className="flex items-center gap-4">
+                    {s.page && (
+                      <Link to={s.page} className="text-xs font-bold text-white inline-flex items-center gap-2 hover:text-emerald-400 transition-colors">Learn more <ArrowRight size={14} /></Link>
+                    )}
+                    <a href={wa(`Hi, I'm interested in ${s.title}`)} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-emerald-400 inline-flex items-center gap-2 group-hover:translate-x-1 transition-transform">Inquire via WhatsApp <ArrowRight size={14} /></a>
+                  </div>
                 </Card>
               </div>
             ))}
@@ -331,7 +343,11 @@ export default function LandingPage() {
             <p className="flex items-center gap-2"><MapPin size={14} className="text-emerald-400" />Gulshan-e-Maymar, Karachi</p>
             <a href="tel:03142763051" className="flex items-center gap-2 hover:text-emerald-400"><Phone size={14} className="text-emerald-400" />+92 314 2763051</a>
             <a href="mailto:karachibussinessgrowth@gmail.com" className="flex items-center gap-2 hover:text-emerald-400"><Mail size={14} className="text-emerald-400" />karachibussinessgrowth@gmail.com</a></div>
-          <div><h4 className="text-white font-bold mb-3">Services</h4><ul className="space-y-2"><li>Meta, TikTok & Google Ads</li><li>Web, Apps & UI/UX</li><li>Google Map SEO Karachi</li><li>QR Codes & Catalogs</li></ul></div>
+          <div><h4 className="text-white font-bold mb-3">Services</h4><ul className="space-y-2">
+            <li><Link to="/seo-services" className="hover:text-emerald-400">Local SEO & Google Maps</Link></li>
+            <li><Link to="/google-ads" className="hover:text-emerald-400">Google & YouTube Ads</Link></li>
+            <li><Link to="/whatsapp-marketing" className="hover:text-emerald-400">WhatsApp Marketing & AI</Link></li>
+            <li>Meta & TikTok Ads</li><li>Web, Apps & UI/UX</li></ul></div>
           <div className="space-y-3"><h4 className="text-white font-bold">Instant WhatsApp Consultation</h4>
             <a href={wa("Hi! I'm reaching out from your website.")} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500 hover:text-slate-950 font-bold py-3 rounded-xl transition-colors"><MessageCircle size={16} />Chat on WhatsApp</a></div>
         </div>
