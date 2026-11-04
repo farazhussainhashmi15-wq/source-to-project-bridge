@@ -160,9 +160,11 @@ export default function LandingPage() {
             </div>
           </a>
           <nav className="hidden lg:flex gap-6 text-sm font-medium text-slate-300">
-            {[["services", "Services"], ["strategies", "More Customers"], ["funnel", "WhatsApp Funnel"], ["calculator", "Estimate Plan"], ["vip", "VIP Club"]].map(([id, l]) => (
-              <a key={id} href={`#${id}`} className="hover:text-emerald-400 transition-colors">{l}</a>
-            ))}
+            <a href="#services" className="hover:text-emerald-400 transition-colors">Services</a>
+            <Link to="/seo-services" className="hover:text-emerald-400 transition-colors">SEO</Link>
+            <Link to="/google-ads" className="hover:text-emerald-400 transition-colors">Google Ads</Link>
+            <Link to="/whatsapp-marketing" className="hover:text-emerald-400 transition-colors">WhatsApp</Link>
+            <a href="#calculator" className="hover:text-emerald-400 transition-colors">Estimate Plan</a>
           </nav>
           <div className="hidden sm:flex gap-3">
             <a href="tel:03142763051" className="border border-slate-700 hover:border-emerald-500 px-4 py-2.5 rounded-full text-xs font-bold flex items-center gap-2 transition-colors"><Phone size={14} className="text-emerald-400" />0314 2763051</a>
@@ -172,9 +174,11 @@ export default function LandingPage() {
         </div>
         {menu && (
           <div className="lg:hidden px-6 py-4 space-y-3 bg-[#151C2C] border-t border-slate-800 animate-in slide-in-from-top-2">
-            {["services", "strategies", "funnel", "calculator", "vip"].map((id) => (
-              <a key={id} href={`#${id}`} onClick={() => setMenu(false)} className="block capitalize py-2 border-b border-slate-800">{id}</a>
-            ))}
+            <a href="#services" onClick={() => setMenu(false)} className="block py-2 border-b border-slate-800">Services</a>
+            <Link to="/seo-services" onClick={() => setMenu(false)} className="block py-2 border-b border-slate-800">SEO</Link>
+            <Link to="/google-ads" onClick={() => setMenu(false)} className="block py-2 border-b border-slate-800">Google Ads</Link>
+            <Link to="/whatsapp-marketing" onClick={() => setMenu(false)} className="block py-2 border-b border-slate-800">WhatsApp Marketing</Link>
+            <a href="#calculator" onClick={() => setMenu(false)} className="block py-2 border-b border-slate-800">Estimate Plan</a>
           </div>
         )}
       </header>
@@ -246,7 +250,12 @@ export default function LandingPage() {
                   </div>
                   <h3 className="text-xl font-bold text-white mb-2">{s.title}</h3>
                   <p className="text-slate-400 text-sm mb-5">{s.text}</p>
-                  <a href={wa(`Hi, I'm interested in ${s.title}`)} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-emerald-400 inline-flex items-center gap-2 group-hover:translate-x-1 transition-transform">Inquire via WhatsApp <ArrowRight size={14} /></a>
+                  <div className="flex items-center gap-4">
+                    {s.page && (
+                      <Link to={s.page} className="text-xs font-bold text-white inline-flex items-center gap-2 hover:text-emerald-400 transition-colors">Learn more <ArrowRight size={14} /></Link>
+                    )}
+                    <a href={wa(`Hi, I'm interested in ${s.title}`)} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-emerald-400 inline-flex items-center gap-2 group-hover:translate-x-1 transition-transform">Inquire via WhatsApp <ArrowRight size={14} /></a>
+                  </div>
                 </Card>
               </div>
             ))}
@@ -334,7 +343,11 @@ export default function LandingPage() {
             <p className="flex items-center gap-2"><MapPin size={14} className="text-emerald-400" />Gulshan-e-Maymar, Karachi</p>
             <a href="tel:03142763051" className="flex items-center gap-2 hover:text-emerald-400"><Phone size={14} className="text-emerald-400" />+92 314 2763051</a>
             <a href="mailto:karachibussinessgrowth@gmail.com" className="flex items-center gap-2 hover:text-emerald-400"><Mail size={14} className="text-emerald-400" />karachibussinessgrowth@gmail.com</a></div>
-          <div><h4 className="text-white font-bold mb-3">Services</h4><ul className="space-y-2"><li>Meta, TikTok & Google Ads</li><li>Web, Apps & UI/UX</li><li>Google Map SEO Karachi</li><li>QR Codes & Catalogs</li></ul></div>
+          <div><h4 className="text-white font-bold mb-3">Services</h4><ul className="space-y-2">
+            <li><Link to="/seo-services" className="hover:text-emerald-400">Local SEO & Google Maps</Link></li>
+            <li><Link to="/google-ads" className="hover:text-emerald-400">Google & YouTube Ads</Link></li>
+            <li><Link to="/whatsapp-marketing" className="hover:text-emerald-400">WhatsApp Marketing & AI</Link></li>
+            <li>Meta & TikTok Ads</li><li>Web, Apps & UI/UX</li></ul></div>
           <div className="space-y-3"><h4 className="text-white font-bold">Instant WhatsApp Consultation</h4>
             <a href={wa("Hi! I'm reaching out from your website.")} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500 hover:text-slate-950 font-bold py-3 rounded-xl transition-colors"><MessageCircle size={16} />Chat on WhatsApp</a></div>
         </div>
