@@ -13,6 +13,7 @@ export interface ServicePageConfig {
   benefits: { title: string; text: string }[];
   included: string[];
   process: { step: string; text: string }[];
+  faqs: { q: string; a: string }[];
   ctaTitle: string;
   ctaText: string;
   waMessage: string;
