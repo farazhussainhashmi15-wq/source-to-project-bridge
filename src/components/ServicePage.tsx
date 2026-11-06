@@ -13,6 +13,12 @@ import {
 } from "lucide-react";
 import logoKbg from "../assets/logo-kbg-a.png";
 import { servicePages, type ServicePageConfig } from "@/lib/service-pages";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const WA = "923142763051";
 const wa = (t: string) => `https://wa.me/${WA}?text=${encodeURIComponent(t)}`;
@@ -199,6 +205,36 @@ export default function ServicePage({ config }: { config: ServicePageConfig }) {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* FAQs */}
+      <section className="py-16">
+        <div className="max-w-3xl mx-auto px-4">
+          <div className="text-center mb-10 space-y-3">
+            <h2 className="text-xs uppercase font-extrabold tracking-widest text-emerald-400">
+              Common Questions
+            </h2>
+            <p className="text-3xl sm:text-4xl font-extrabold text-white">
+              Frequently Asked Questions
+            </p>
+          </div>
+          <Accordion type="single" collapsible className="space-y-4">
+            {config.faqs.map((f, i) => (
+              <AccordionItem
+                key={f.q}
+                value={`faq-${i}`}
+                className="kbg-card rounded-2xl border-none px-6"
+              >
+                <AccordionTrigger className="text-left text-white font-bold hover:no-underline py-5">
+                  {f.q}
+                </AccordionTrigger>
+                <AccordionContent className="text-slate-400 text-sm leading-relaxed pb-5">
+                  {f.a}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </div>
       </section>
 

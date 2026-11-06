@@ -13,6 +13,7 @@ export interface ServicePageConfig {
   benefits: { title: string; text: string }[];
   included: string[];
   process: { step: string; text: string }[];
+  faqs: { q: string; a: string }[];
   ctaTitle: string;
   ctaText: string;
   waMessage: string;
@@ -68,6 +69,28 @@ export const servicePages: ServicePageConfig[] = [
       { step: "Free Local SEO Audit", text: "We review your current Google presence, competitors and missed keyword opportunities in Karachi." },
       { step: "Optimize Everything", text: "Profile, categories, photos, services, website pages and citations — all aligned to your target keywords." },
       { step: "Grow & Report", text: "Ongoing optimization, review building and a clear monthly report on rankings and leads." },
+    ],
+    faqs: [
+      {
+        q: "How long does local SEO take to show results?",
+        a: "It depends on your market and competition. Google Business Profile improvements often show first, while website rankings build month after month. In your free audit we review your situation and give you an honest timeline — no false promises.",
+      },
+      {
+        q: "Do I need a website to rank on Google Maps?",
+        a: "No — a well-optimized Google Business Profile can bring calls and direction requests on its own. A website strengthens your rankings and gives customers more reasons to choose you, so we recommend both for the best results.",
+      },
+      {
+        q: "Which areas of Karachi do you cover?",
+        a: "We target the specific areas your customers live in — from Gulshan-e-Maymar to DHA and beyond. Your campaign is built around the locations that actually bring you business.",
+      },
+      {
+        q: "What does the free local SEO audit include?",
+        a: "We review your current Google presence, your competitors and the keyword opportunities you're missing in Karachi — then show you exactly where you stand on Google Maps. It's free, with no obligation.",
+      },
+      {
+        q: "How will I know the work is bringing results?",
+        a: "You get a clear monthly report showing rankings, calls, direction requests and website visits — in plain language, with no jargon and no hiding.",
+      },
     ],
     ctaTitle: "Get a Free Local SEO Audit",
     ctaText: "Send us your business name on WhatsApp and we'll show you exactly where you stand on Google Maps in Karachi — free.",
@@ -125,6 +148,28 @@ export const servicePages: ServicePageConfig[] = [
       { step: "Launch Campaigns", text: "Search, YouTube or Performance Max campaigns go live with tracking and landing pages in place." },
       { step: "Optimize & Scale", text: "Weekly tuning of keywords, bids and creatives — scaling what brings the cheapest qualified leads." },
     ],
+    faqs: [
+      {
+        q: "How much budget do I need for Google Ads?",
+        a: "It depends on your industry and competition in Karachi. Tell us your business and monthly budget on WhatsApp and we'll send back a free plan with expected costs and leads before you spend anything.",
+      },
+      {
+        q: "How fast will I see results?",
+        a: "Campaigns can start generating calls and messages within days of going live. From there, weekly optimization keeps improving what each rupee brings in.",
+      },
+      {
+        q: "What's the difference between Search, YouTube and Performance Max?",
+        a: "Search ads capture people already looking for what you sell. YouTube builds demand with video. Performance Max lets Google find converters across all its channels. We recommend the mix that fits your goals and budget.",
+      },
+      {
+        q: "Will my ad clicks turn into actual customers?",
+        a: "That's the whole plan: we build fast, mobile-first landing pages with one-tap WhatsApp so clicks become conversations, and conversion tracking shows exactly which ads bring calls, messages and form leads.",
+      },
+      {
+        q: "How do I see where my money went?",
+        a: "Every month you get a transparent report: exactly what was spent, what it brought in, and what we're improving next.",
+      },
+    ],
     ctaTitle: "Get a Free Google Ads Plan",
     ctaText: "Tell us your business and monthly budget on WhatsApp — we'll send back a campaign plan with expected costs and leads.",
     waMessage: "Hi! I'd like a free Google Ads plan for my business in Karachi.",
@@ -180,6 +225,28 @@ export const servicePages: ServicePageConfig[] = [
       { step: "Automate Replies", text: "AI answers FAQs instantly and hands over to you whenever a personal touch is needed." },
       { step: "Broadcast & Grow", text: "Launch offers and click-to-WhatsApp ads fill your chat with buyers — and the funnel keeps them coming back." },
     ],
+    faqs: [
+      {
+        q: "Do my customers need to install anything new?",
+        a: "No — they simply message your business on WhatsApp, the app they already use every day. Your catalog, prices and offers appear right inside the chat.",
+      },
+      {
+        q: "What can the AI auto-replies answer?",
+        a: "Common questions get an instant answer the second a customer messages — day or night. Whenever a personal touch is needed, the conversation is handed over to you.",
+      },
+      {
+        q: "Can I still reply to customers myself?",
+        a: "Yes. You review full chat history and reply from a single inbox, so nothing slips through — the automation supports you, it doesn't replace you.",
+      },
+      {
+        q: "Will broadcasts annoy my customers?",
+        a: "Broadcasts go only to customers who opted in and already trust your business. Used for new arrivals, flash deals and VIP offers, they bring repeat sales instead of complaints.",
+      },
+      {
+        q: "What are click-to-WhatsApp ads?",
+        a: "Ads on Meta and Google that open a WhatsApp chat with your business instead of a form — dropping hot leads directly into a conversation.",
+      },
+    ],
     ctaTitle: "Get a Free WhatsApp Funnel Plan",
     ctaText: "Message us on WhatsApp and we'll map out the exact auto-reply and broadcast funnel for your business — free.",
     waMessage: "Hi! I'd like a free WhatsApp marketing funnel plan for my business.",
@@ -228,6 +295,18 @@ export function serviceHead(config: ServicePageConfig) {
             },
           },
           areaServed: { "@type": "City", name: "Karachi" },
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: config.faqs.map((f) => ({
+            "@type": "Question",
+            name: f.q,
+            acceptedAnswer: { "@type": "Answer", text: f.a },
+          })),
         }),
       },
     ],
