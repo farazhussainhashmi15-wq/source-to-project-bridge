@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import LandingPage from "@/components/LandingPage";
 
-// Aap ka sahi Vercel URL
+// Aap ka Live Vercel Domain setup
 const SITE_URL = "https://source-to-project-bridge.vercel.app";
-const OG_IMAGE_URL = `${SITE_URL}/og-image.jpg`;
+const OG_IMAGE_URL = `${SITE_URL}/og-image.jpg`; // Ensure this image exists in your public folder
 
 export const Route = createFileRoute("/")({
   staticData: { sitemap: true },
@@ -22,7 +22,7 @@ export const Route = createFileRoute("/")({
         content: "D3oBkvWhZt4T-EAyDuBK9mS6lyf30gQKd8LlKB_NmY8",
       },
 
-      // Open Graph Metadata
+      // Open Graph Metadata (Facebook, WhatsApp, LinkedIn previews)
       { property: "og:title", content: "Karachi Business Growth — Ads, SEO & WhatsApp AI" },
       {
         property: "og:description",
@@ -53,37 +53,4 @@ export const Route = createFileRoute("/")({
           "@context": "https://schema.org",
           "@type": "ProfessionalService",
           name: "Karachi Business Growth",
-          image: OG_IMAGE_URL,
-          description:
-            "Meta, TikTok & Google ads, Google Maps SEO, websites and WhatsApp AI funnels for Karachi businesses.",
-          url: `${SITE_URL}/`,
-          telephone: "+923142763051",
-          email: "karachibussinessgrowth@gmail.com",
-          priceRange: "$$",
-          address: {
-            "@type": "PostalAddress",
-            addressLocality: "Gulshan-e-Maymar",
-            addressRegion: "Karachi",
-            addressCountry: "PK",
-          },
-          geo: {
-            "@type": "GeoCoordinates",
-            latitude: "24.9983",
-            longitude: "67.1350",
-          },
-          areaServed: { 
-            "@type": "City", 
-            name: "Karachi" 
-          },
-          contactPoint: {
-            "@type": "ContactPoint",
-            telephone: "+923142763051",
-            contactType: "customer service",
-            availableLanguage: ["English", "Urdu"],
-          },
-        }),
-      },
-    ],
-  }),
-  component: LandingPage,
-});
+          image
