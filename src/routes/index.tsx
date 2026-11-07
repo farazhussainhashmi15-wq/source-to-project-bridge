@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import LandingPage from "@/components/LandingPage";
 
-// Base Configuration
-const SITE_URL = "https://karachi-bussiness-growth.lovable.app";
-const OG_IMAGE_URL = `${SITE_URL}/og-image.jpg`; // Ensure this image exists in your public folder
+// Aap ka sahi Vercel URL
+const SITE_URL = "https://source-to-project-bridge.vercel.app";
+const OG_IMAGE_URL = `${SITE_URL}/og-image.jpg`;
 
 export const Route = createFileRoute("/")({
   staticData: { sitemap: true },
@@ -22,7 +22,7 @@ export const Route = createFileRoute("/")({
         content: "D3oBkvWhZt4T-EAyDuBK9mS6lyf30gQKd8LlKB_NmY8",
       },
 
-      // Open Graph Metadata (Facebook, WhatsApp, LinkedIn)
+      // Open Graph Metadata
       { property: "og:title", content: "Karachi Business Growth — Ads, SEO & WhatsApp AI" },
       {
         property: "og:description",
