@@ -93,6 +93,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Karachi Business Growth" },
+      {
+        name: "google-site-verification",
+        content: "D3oBkvWhZt4T-EAyDuBK9mS6lyf30gQKd8LlKB_NmY8",
+      },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
