@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "events": {
+    "project.whatsapp_click": {
+      "event_schema_version": 1,
+      "description": "A visitor clicked a WhatsApp button on a service page.",
+      "privacy": {
+        "contains_pii": false,
+        "purpose": "product_analytics"
+      },
+      "properties_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "service",
+          "placement"
+        ],
+        "properties": {
+          "service": {
+            "type": "string",
+            "enum": [
+              "seo-services",
+              "google-ads",
+              "whatsapp-marketing"
+            ]
+          },
+          "placement": {
+            "type": "string",
+            "enum": [
+              "header",
+              "hero",
+              "cta",
+              "footer",
+              "floating"
+            ]
+          }
+        }
+      }
+    }
+  }
+}
