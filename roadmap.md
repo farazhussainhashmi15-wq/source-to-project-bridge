@@ -18,4 +18,4 @@
 - Auto-reply copy lives in src/lib/whatsapp/webhook-processor.server.ts as AUTO_REPLY_TEXT.
 - No approved WhatsApp templates exist yet; Meta review can take up to 48 hours.
 - The project's code is stored only in Lovable's own storage; no GitHub repository is linked.
-- [ ] Track WhatsApp clicks per service page
+- [x] Track WhatsApp clicks per service page

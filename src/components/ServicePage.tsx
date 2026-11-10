@@ -24,6 +24,11 @@ const WA = "923142763051";
 const wa = (t: string) => `https://wa.me/${WA}?text=${encodeURIComponent(t)}`;
 
 export default function ServicePage({ config }: { config: ServicePageConfig }) {
+  const trackWa = (placement: string) =>
+    window.__lovableEvents?.track?.("project.whatsapp_click", {
+      service: config.slug.slice(1),
+      placement,
+    });
   const [menu, setMenu] = useState(false);
   const btn =
     "kbg-shine relative overflow-hidden inline-flex items-center justify-center gap-2 font-bold rounded-2xl transition-transform hover:scale-105";
@@ -76,6 +81,7 @@ export default function ServicePage({ config }: { config: ServicePageConfig }) {
               0314 2763051
             </a>
             <a
+              onClick={() => trackWa("header")}
               href={wa(config.waMessage)}
               target="_blank"
               rel="noopener noreferrer"
@@ -129,6 +135,7 @@ export default function ServicePage({ config }: { config: ServicePageConfig }) {
           <p className="text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto">{config.intro}</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-2">
             <a
+              onClick={() => trackWa("hero")}
               href={wa(config.waMessage)}
               target="_blank"
               rel="noopener noreferrer"
@@ -245,6 +252,7 @@ export default function ServicePage({ config }: { config: ServicePageConfig }) {
           <p className="text-slate-400 max-w-2xl mx-auto">{config.ctaText}</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-2">
             <a
+              onClick={() => trackWa("cta")}
               href={wa(config.waMessage)}
               target="_blank"
               rel="noopener noreferrer"
@@ -302,6 +310,7 @@ export default function ServicePage({ config }: { config: ServicePageConfig }) {
           <div className="space-y-3">
             <h4 className="text-white font-bold">Instant WhatsApp Consultation</h4>
             <a
+              onClick={() => trackWa("footer")}
               href={wa("Hi! I'm reaching out from your website.")}
               target="_blank"
               rel="noopener noreferrer"
@@ -316,7 +325,8 @@ export default function ServicePage({ config }: { config: ServicePageConfig }) {
       </footer>
 
       <a
-        href={wa(config.waMessage)}
+        onClick={() => trackWa("floating")}
+              href={wa(config.waMessage)}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="WhatsApp"
